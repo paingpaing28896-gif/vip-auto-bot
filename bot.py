@@ -4,7 +4,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
 BOT_TOKEN = os.getenv("8884700528:AAFC3ReuEta_V7iSqcT9t8cZsmPP4WOe_So")
-OPENAI_API_KEY = os.getenv("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")
+OPENAI_API_KEY = os.getenv(" ")
 
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN is not configured")
