@@ -3,8 +3,9 @@ from openai import OpenAI
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
-BOT_TOKEN = os.getenv("8884700528:AAFC3ReuEta_V7iSqcT9t8cZsmPP4WOe_So")
-OPENAI_API_KEY = os.getenv(" ")
+# Railway Variables ထဲကနေ Key တွေကို ယူပါမယ်
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN is not configured")
@@ -26,23 +27,27 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text or ""
 
     try:
-        response = client.responses.create(
-            model="gpt-5.6-luna",
-            instructions=(
-                "You are a helpful Telegram bot. "
-                "Answer the user's questions clearly and naturally in Burmese. "
-                "If the user asks about VIP or Membership, answer helpfully."
-            ),
-            input=text
+        # OpenAI chat completion API
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # သုံးစွဲစရိတ် သက်သာပြီး အဆင်ပြေသည့် Model
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a helpful Telegram bot. "
+                        "Answer the user's questions clearly and naturally in Burmese. "
+                        "If the user asks about VIP or Membership, answer helpfully."
+                    )
+                },
+                {"role": "user", "content": text}
+            ]
         )
 
-        reply = response.output_text
-
+        reply = response.choices[0].message.content
         await update.message.reply_text(reply)
 
     except Exception as e:
         print("OpenAI Error:", e)
-
         await update.message.reply_text(
             "AI နဲ့ ချိတ်ဆက်ရာမှာ အခက်အခဲရှိနေပါတယ်။ "
             "ခဏနေပြီး ပြန်စမ်းကြည့်ပါ။"
@@ -61,5 +66,5 @@ def main():
     app.run_polling()
 
 
-if name == "main":
+if __name__ == "__main__":
     main()
